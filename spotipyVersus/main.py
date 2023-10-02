@@ -1,7 +1,8 @@
 import spotipy
 import pandas as pd
 from spotipy.oauth2 import SpotifyClientCredentials
-import sys
+import time
+start_time = time.time()
 
 def calcBetter(artistName1,artistName2):
 
@@ -25,7 +26,6 @@ def calcBetter(artistName1,artistName2):
         uri=result["artists"]["items"][0]["uri"]
         data = spotify.artist_albums(uri, album_type='album')
         albums = data['items']
-        songs=[]
         while data['next']:
             data = spotify.next(data)
             albums.extend(data['items'])
@@ -34,12 +34,10 @@ def calcBetter(artistName1,artistName2):
             albId=album["uri"].split(":")[2]
             data2=spotify.album_tracks(albId)
             for each in data2["items"]:
-                #songs[each['duration_ms']]=each["name"]
                 songURI=each["id"]
                 songData=spotify.track(songURI)
                 popularity = songData["popularity"]
                 duration = songData["duration_ms"]
-                name=songData['name']
                 numArtist=len(songData["artists"])
                 new_df= pd.DataFrame({"Popularity" : [popularity], "Duration" : [duration], "numArtists" :[numArtist]})
                 artist1 = pd.concat([artist1, new_df], ignore_index=True)
@@ -52,7 +50,6 @@ def calcBetter(artistName1,artistName2):
         uri=result["artists"]["items"][0]["uri"]
         data = spotify.artist_albums(uri, album_type='album')
         albums = data['items']
-        songs=[]
         while data['next']:
             data = spotify.next(data)
             albums.extend(data['items'])
@@ -61,12 +58,10 @@ def calcBetter(artistName1,artistName2):
             albId=album["uri"].split(":")[2]
             data2=spotify.album_tracks(albId)
             for each in data2["items"]:
-                #songs[each['duration_ms']]=each["name"]
                 songURI=each["id"]
                 songData=spotify.track(songURI)
                 popularity = songData["popularity"]
                 duration = songData["duration_ms"]
-                name=songData['name']
                 numArtist=len(songData["artists"])
                 new_df= pd.DataFrame({"Popularity" : [popularity], "Duration" : [duration], "numArtists" :[numArtist]})
                 artist2 = pd.concat([artist2, new_df], ignore_index=True)
@@ -77,16 +72,31 @@ def calcBetter(artistName1,artistName2):
     outputString=""
     outputString+= "Time to decide who is the better artist between " + artistName1 + " and " + artistName2 + "."
     outputString+= "\n"
-    outputString+="Success factor: " + artistName1 + " - " + str(artist1["Popularity"].mean()) + "\t " + artistName2 + " - " + str(artist2["Popularity"].mean())
+    outputString+="Success factor: " + artistName1 + " - " + str(round(artist1["Popularity"].mean(),2)) + "\t " + artistName2 + " - " + str(round(artist2["Popularity"].mean(),2))
     outputString+= "\n"
-    outputString+="Song length factor: " + artistName1 + " - " + str(artist1["Duration"].mean()) + "\t " + artistName2 + " - " + str(artist2["Duration"].mean())
+    outputString+="Song length: " + artistName1 + " - " + str(int(artist1["Duration"].mean()//1000//60)) + " minutes and " + str(int(artist1["Duration"].mean()//1000%60)) + " seconds " + "\t " + artistName2 + " - " + str(int(artist2["Duration"].mean()//1000//60)) + " minutes and " + str(int(artist2["Duration"].mean()//1000%60)) + " seconds"
     outputString+="\n"
-    outputString+="Collab factor: " + artistName1 + " - " + str(artist1["numArtists"].mean()) + "\t " + artistName2 + " - " + str(artist2["numArtists"].mean())
-    return(outputString)
+    outputString+="Collab factor: " + artistName1 + " - " + str(round(artist1["numArtists"].mean(),2)) + "\t " + artistName2 + " - " + str(round(artist2["numArtists"].mean(),2))
+    
+    finWinner=0
+    finWinner += (artist1["Popularity"].mean()-artist2["Popularity"].mean())*10
+    finWinner += (int(artist1["Duration"].mean())-int(artist2["Duration"].mean()))//60000
+    finWinner += (artist2["numArtists"].mean() - artist1["numArtists"].mean())*3
+    print(finWinner)
+    if finWinner ==0 :
+        print("Wow! It's a tie. Both artists are perfectly balanced")
+    elif finWinner > 0:
+        print(artistName1 + " wins!")
+    else:
+        print(artistName2 + " wins!")
+    
+    
+   
 
 print("What artist do you want to search for?")
 artistName1=input()
 print("Who is the second artist you want to compare")
 artistName2=input()
 print("Loading many API requests, please wait...")
-print(calcBetter(artistName1,artistName2))
+calcBetter(artistName1,artistName2)
+print("Process finished --- %s seconds ---" % round((time.time() - start_time),3))
