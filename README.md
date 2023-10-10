@@ -1,4 +1,4 @@
-# spotipyPractice
+# spotipyVersus
 Repo for implementing spotify's python API - Spotipy. Versus contest between two artists to determine which is the better or 
 more accomplished artist.
 
