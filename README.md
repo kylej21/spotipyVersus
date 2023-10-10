@@ -2,9 +2,19 @@
 Repo for implementing spotify's python API - Spotipy. Versus contest between two artists to determine which is the better or 
 more accomplished artist.
 
-Required Dependencies:
+# Required Dependencies:
 - Python
 - Pandas
+
+# Setup:
+
+You will need a Spotify Client ID and secret to run this software. In order to get this information follow these steps:
+1- go to https://developer.spotify.com/ and create your own spotify app. It does not matter what you name it
+2- After making your app click settings and collect your Client ID and Client Secret.
+3- Fill in the corresponding lines on Main.py with your Client ID and secret.
+4- when in the correct directory enter ```Python3 main.py``` 
+5- Respond to prompts and wait for it to analyze.
+
 
 Decision Making Process:
 
