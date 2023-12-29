@@ -6,8 +6,8 @@ start_time = time.time()
 
 def calcBetter(artistName1,artistName2):
 
-    cid = 'b1a844a5bc41486b8a7704fa54391a89'
-    secret = '1d3f9abd9b5f41a4a7c268a1f0e106fc'
+    cid = ''
+    secret = ''
     client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
     spotify = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
     
@@ -77,12 +77,11 @@ def calcBetter(artistName1,artistName2):
     outputString+="Song length: " + artistName1 + " - " + str(int(artist1["Duration"].mean()//1000//60)) + " minutes and " + str(int(artist1["Duration"].mean()//1000%60)) + " seconds " + "\t " + artistName2 + " - " + str(int(artist2["Duration"].mean()//1000//60)) + " minutes and " + str(int(artist2["Duration"].mean()//1000%60)) + " seconds"
     outputString+="\n"
     outputString+="Collab factor: " + artistName1 + " - " + str(round(artist1["numArtists"].mean(),2)) + "\t " + artistName2 + " - " + str(round(artist2["numArtists"].mean(),2))
-    
+    print(outputString)
     finWinner=0
     finWinner += (artist1["Popularity"].mean()-artist2["Popularity"].mean())*10
     finWinner += (int(artist1["Duration"].mean())-int(artist2["Duration"].mean()))//60000
     finWinner += (artist2["numArtists"].mean() - artist1["numArtists"].mean())*3
-    print(finWinner)
     if finWinner ==0 :
         print("Wow! It's a tie. Both artists are perfectly balanced")
     elif finWinner > 0:
